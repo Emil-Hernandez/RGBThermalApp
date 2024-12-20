@@ -12,8 +12,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.example.rgbthermalapp.ml.Rgbmodel;
 import com.example.rgbthermalapp.ml.Thermalmodel;
@@ -28,8 +26,6 @@ import java.nio.ByteOrder;
 public class MainActivity extends AppCompatActivity {
 
     Button RGBCam, RGBGal, ThermalGal;
-    ImageView imageView;
-    TextView result;
 
     int RGBImageSize = 64, ThermalImageSize = 224;
 
@@ -41,9 +37,6 @@ public class MainActivity extends AppCompatActivity {
         RGBCam = findViewById(R.id.RGBCamBtn);
         RGBGal = findViewById(R.id.RGBGalBtn);
         ThermalGal = findViewById(R.id.ThermalGalBtn);
-
-        result = findViewById(R.id.result);
-        imageView = findViewById(R.id.imageView);
 
         RGBCam.setOnClickListener(v -> {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
@@ -89,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
     private void processImage(Bitmap image, int size, String type) {
         if (image != null) {
             image = Bitmap.createScaledBitmap(image, size, size, false);
-            imageView.setImageBitmap(image);
 
             try {
                 if (type.equals("rgb")) {
@@ -123,18 +115,24 @@ public class MainActivity extends AppCompatActivity {
 
         inputBuffer.loadBuffer(byteBuffer);
 
+        String result = "";
         if (modelInstance instanceof Rgbmodel) {
             TensorBuffer outputBuffer = ((Rgbmodel) modelInstance).process(inputBuffer).getOutputFeature0AsTensorBuffer();
             float[] confidences = outputBuffer.getFloatArray();
-            result.setText(getRGBClassLabel(confidences));
+            result = getRGBClassLabel(confidences);
             ((Rgbmodel) modelInstance).close();
         } else if (modelInstance instanceof Thermalmodel) {
             TensorBuffer outputBuffer = ((Thermalmodel) modelInstance).process(inputBuffer).getOutputFeature0AsTensorBuffer();
             float[] confidences = outputBuffer.getFloatArray();
-            result.setText(getClassLabel(confidences));
+            result = getClassLabel(confidences);
             ((Thermalmodel) modelInstance).close();
         }
 
+        // Create an intent to pass the data to the ClassificationActivity
+        Intent intent = new Intent(MainActivity.this, ClassificationActivity.class);
+        intent.putExtra("result", result);  // Pass the classification result
+        intent.putExtra("image", image);  // Pass the image
+        startActivity(intent);
     }
 
     private String getClassLabel(float[] confidences) {
