@@ -27,16 +27,16 @@ public class MainActivity extends AppCompatActivity {
 
     Button RGBCam, RGBGal, ThermalGal;
 
-    int RGBImageSize = 64, ThermalImageSize = 224;
+    int RGBImageSize = 224, ThermalImageSize = 224;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RGBCam = findViewById(R.id.RGBCamBtn);
-        RGBGal = findViewById(R.id.RGBGalBtn);
-        ThermalGal = findViewById(R.id.ThermalGalBtn);
+        RGBCam = findViewById(R.id.phoneCameraButton);
+        RGBGal = findViewById(R.id.browseGalleryButton);
+        ThermalGal = findViewById(R.id.thermalGalleryButton);
 
         RGBCam.setOnClickListener(v -> {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String getRGBClassLabel(float[] confidences) {
-        String[] labels = {"Healthy Leaves", "Leaf Rust", "Leaf Blight", "Leaf Spot"};
+        String[] labels = {"Highly Resistant","Resistant", "Moderately Resistant", "Moderately Susceptible", "Susceptible", "Highly Susceptible"};
         int maxIndex = 0;
         for (int i = 1; i < confidences.length; i++) {
             if (confidences[i] > confidences[maxIndex]) {
