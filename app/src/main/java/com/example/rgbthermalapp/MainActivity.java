@@ -3,7 +3,6 @@ package com.example.rgbthermalapp;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,27 +11,33 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.widget.Button;
-
 import com.example.rgbthermalapp.ml.Rgbmodel;
 import com.example.rgbthermalapp.ml.Thermalmodel;
-
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 import org.tensorflow.lite.DataType;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Objects;
+import android.os.Build;
+import android.view.View;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
 
 public class MainActivity extends AppCompatActivity {
 
     Button RGBCam, RGBGal, ThermalGal;
-
     int RGBImageSize = 224, ThermalImageSize = 224;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
 
         RGBCam = findViewById(R.id.phoneCameraButton);
         RGBGal = findViewById(R.id.browseGalleryButton);
@@ -56,22 +61,29 @@ public class MainActivity extends AppCompatActivity {
             Intent ThermalGalIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(ThermalGalIntent, 5);
         });
+
+        Button aboutButton = findViewById(R.id.aboutButton);
+        aboutButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+            startActivity(intent);
+        });
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && data != null) {
-            Bitmap image = null;
+            Bitmap originalImage; // Store the original image
 
             if (requestCode == 3) {
-                image = (Bitmap) data.getExtras().get("data");
-                processImage(image, RGBImageSize, "rgb");
+                originalImage = (Bitmap) Objects.requireNonNull(data.getExtras()).get("data");
+                processImage(originalImage, RGBImageSize, "rgb");
             } else if (requestCode == 4 || requestCode == 5) {
                 Uri dat = data.getData();
                 try {
-                    image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), dat);
-                    processImage(image, requestCode == 4 ? RGBImageSize : ThermalImageSize, requestCode == 4 ? "rgb" : "thermal");
+                    originalImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), dat);
+                    processImage(originalImage, requestCode == 4 ? RGBImageSize : ThermalImageSize, requestCode == 4 ? "rgb" : "thermal");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -79,15 +91,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void processImage(Bitmap image, int size, String type) {
-        if (image != null) {
-            image = Bitmap.createScaledBitmap(image, size, size, false);
+
+    private void processImage(Bitmap originalImage, int size, String type) {
+        if (originalImage != null) {
+            Bitmap resizedImage = Bitmap.createScaledBitmap(originalImage, size, size, false);
 
             try {
                 if (type.equals("rgb")) {
-                    classifyImage(image, size, Rgbmodel.newInstance(this));
+                    classifyImage(originalImage, resizedImage, size, Rgbmodel.newInstance(this));
                 } else {
-                    classifyImage(image, size, Thermalmodel.newInstance(this));
+                    classifyImage(originalImage, resizedImage, size, Thermalmodel.newInstance(this));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -95,13 +108,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void classifyImage(Bitmap image, int size, Object modelInstance) {
+
+    private void classifyImage(Bitmap originalImage, Bitmap resizedImage, int size, Object modelInstance) {
         TensorBuffer inputBuffer = TensorBuffer.createFixedSize(new int[]{1, size, size, 3}, DataType.FLOAT32);
         ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * size * size * 3);
         byteBuffer.order(ByteOrder.nativeOrder());
 
         int[] intValues = new int[size * size];
-        image.getPixels(intValues, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
+        resizedImage.getPixels(intValues, 0, resizedImage.getWidth(), 0, 0, resizedImage.getWidth(), resizedImage.getHeight());
 
         int pixel = 0;
         for (int i = 0; i < size; i++) {
@@ -115,45 +129,45 @@ public class MainActivity extends AppCompatActivity {
 
         inputBuffer.loadBuffer(byteBuffer);
 
-        String result = "";
+        String result;
+        String confidenceValue = "";
+
         if (modelInstance instanceof Rgbmodel) {
             TensorBuffer outputBuffer = ((Rgbmodel) modelInstance).process(inputBuffer).getOutputFeature0AsTensorBuffer();
             float[] confidences = outputBuffer.getFloatArray();
-            result = getRGBClassLabel(confidences);
+            result = getClassLabel(confidences);
+            confidenceValue = String.format("%.2f", confidences[getMaxIndex(confidences)] * 100) + "%";
             ((Rgbmodel) modelInstance).close();
-        } else if (modelInstance instanceof Thermalmodel) {
+        } else {
             TensorBuffer outputBuffer = ((Thermalmodel) modelInstance).process(inputBuffer).getOutputFeature0AsTensorBuffer();
             float[] confidences = outputBuffer.getFloatArray();
             result = getClassLabel(confidences);
+            confidenceValue = String.format("%.2f", confidences[getMaxIndex(confidences)] * 100) + "%";
             ((Thermalmodel) modelInstance).close();
         }
 
-        // Create an intent to pass the data to the ClassificationActivity
+        // Store the original image before starting ClassificationActivity
+        ImageStorage.setImage(originalImage);
+
         Intent intent = new Intent(MainActivity.this, ClassificationActivity.class);
-        intent.putExtra("result", result);  // Pass the classification result
-        intent.putExtra("image", image);  // Pass the image
+        intent.putExtra("result", result);
+        intent.putExtra("confidence", confidenceValue);
         startActivity(intent);
     }
 
+
     private String getClassLabel(float[] confidences) {
-        String[] labels = {"Highly Resistant","Resistant", "Moderately Resistant", "Moderately Susceptible", "Susceptible", "Highly Susceptible"};
-        int maxIndex = 0;
-        for (int i = 1; i < confidences.length; i++) {
-            if (confidences[i] > confidences[maxIndex]) {
-                maxIndex = i;
-            }
-        }
-        return labels[maxIndex];
+        String[] labels = {"Highly Resistant", "Resistant", "Moderately Resistant", "Moderately Susceptible", "Susceptible", "Highly Susceptible"};
+        return labels[getMaxIndex(confidences)];
     }
 
-    private String getRGBClassLabel(float[] confidences) {
-        String[] labels = {"Highly Resistant","Resistant", "Moderately Resistant", "Moderately Susceptible", "Susceptible", "Highly Susceptible"};
+    private int getMaxIndex(float[] confidences) {
         int maxIndex = 0;
         for (int i = 1; i < confidences.length; i++) {
             if (confidences[i] > confidences[maxIndex]) {
                 maxIndex = i;
             }
         }
-        return labels[maxIndex];
+        return maxIndex;
     }
 }

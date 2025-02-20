@@ -9,7 +9,7 @@ import android.widget.TextView;
 public class ClassificationActivity extends AppCompatActivity {
 
     ImageView imageView;
-    TextView resultTextView;
+    TextView resultTextView, confidenceTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,15 +18,23 @@ public class ClassificationActivity extends AppCompatActivity {
 
         imageView = findViewById(R.id.imageView);
         resultTextView = findViewById(R.id.result);
+        confidenceTextView = findViewById(R.id.confidenceTextView);
 
-        // Receive the data passed from MainActivity
-        Bitmap image = getIntent().getParcelableExtra("image");
         String result = getIntent().getStringExtra("result");
+        String confidence = getIntent().getStringExtra("confidence");
 
-        // Set the image and result text
+        Bitmap image = ImageStorage.getImage(); // Retrieve the original image
         if (image != null) {
-            imageView.setImageBitmap(image);  // Display the image in ImageView
+            imageView.setImageBitmap(image);
         }
-        resultTextView.setText(result);  // Display the result
+
+        resultTextView.setText(result);
+        confidenceTextView.setText("Confidence: " + confidence);
+    }
+
+
+
+    public void onBackButtonClicked(android.view.View view) {
+        finish(); // Closes ClassificationActivity and returns to MainActivity
     }
 }

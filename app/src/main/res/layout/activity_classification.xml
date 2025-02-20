@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/cornfield_background"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="@drawable/cornfield_background">
 
     <ImageView
         android:id="@+id/imageView"
@@ -15,33 +15,55 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/classified"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Classified as:"
-        android:textColor="@android:color/black"
-        android:textSize="20sp"
-        android:textStyle="bold"
+    <!-- Box Container -->
+    <LinearLayout
+        android:id="@+id/textBoxContainer"
+        android:layout_width="350dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/rounded_box"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="12dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView">
 
-    <TextView
-        android:id="@+id/result"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:text="sampletext"
-        android:textColor="@android:color/black"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/classified" />
+        <!-- Classified as Label -->
+        <TextView
+            android:id="@+id/classified"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Classified as:"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <!-- Classification Result -->
+        <TextView
+            android:id="@+id/result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="Moderately Susceptible"
+            android:textColor="@android:color/black"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+        <!-- Confidence Value -->
+        <TextView
+            android:id="@+id/confidenceTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="Confidence: 0%"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/backButton"
@@ -51,8 +73,8 @@
         android:textSize="18sp"
         android:layout_marginTop="16dp"
         android:layout_marginLeft="16dp"
-        android:backgroundTint="@android:color/holo_green_dark"
-        android:textColor="@color/black"
+        android:backgroundTint="@color/green"
+        android:textColor="@color/white"
         android:onClick="onBackButtonClicked"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
