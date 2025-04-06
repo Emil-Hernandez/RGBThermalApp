@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    android:orientation="vertical"
+    android:background="@drawable/cornfield_background"
+    android:fitsSystemWindows="false"
+    android:gravity="center">
+
+    <!-- White Box Container -->
+    <LinearLayout
+        android:id="@+id/classificationContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.9"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:alpha="0.98"
+        android:background="@drawable/rounded_box"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <!-- First Classification Text -->
+        <TextView
+            android:id="@+id/classificationResult1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="Classification Percentages"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:gravity="center" />
+
+        <!-- First Image -->
+        <ImageView
+            android:id="@+id/classificationImage1"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="Classification Percentages"
+            android:scaleType="fitCenter"
+            android:src="@drawable/class_percent"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Second Classification Text -->
+        <TextView
+            android:id="@+id/classificationResult2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="Classification Descriptions"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:gravity="center" />
+
+        <!-- Second Image -->
+        <ImageView
+            android:id="@+id/classificationImage2"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="Classification Descriptions"
+            android:scaleType="fitCenter"
+            android:src="@drawable/class_desc" />
+
+    </LinearLayout>
+
+    <!-- Back Button -->
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:backgroundTint="@color/green"
+        android:textColor="@color/white"
+        android:onClick="onBackButtonClicked"
+        android:layout_marginTop="10dp" />
+</LinearLayout>

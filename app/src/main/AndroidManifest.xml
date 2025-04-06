@@ -27,6 +27,8 @@
         <activity android:name=".MainActivity"/>
         <activity android:name=".ClassificationActivity" />
         <activity android:name=".AboutActivity" />
+        <activity android:name=".ClassInfoActivity" />
+
     </application>
 
 </manifest>

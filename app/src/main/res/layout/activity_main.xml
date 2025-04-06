@@ -8,11 +8,7 @@
     android:background="@drawable/cornfield_background"
     tools:context=".MainActivity" >
 
-
     <!-- Title -->
-
-    <!-- Phone Camera Button -->
-
     <TextView
         android:id="@+id/homePageTitle"
         android:layout_width="wrap_content"
@@ -26,13 +22,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Thermal Gallery Button (moved up) -->
     <Button
-        android:id="@+id/phoneCameraButton"
+        android:id="@+id/thermalGalleryButton"
         android:layout_width="250dp"
         android:layout_height="100dp"
         android:layout_marginTop="40dp"
         android:backgroundTint="@android:color/holo_orange_light"
-        android:text="Phone Camera"
+        android:text="Thermal Gallery"
         android:textSize="18sp"
         android:textColor="@android:color/black"
         android:drawablePadding="8dp"
@@ -42,20 +39,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Thermal Gallery Button -->
+    <!-- RGB Camera Button (moved down) -->
     <Button
-        android:id="@+id/thermalGalleryButton"
+        android:id="@+id/phoneCameraButton"
         android:layout_width="250dp"
         android:layout_height="100dp"
         android:layout_marginTop="16dp"
         android:backgroundTint="@android:color/holo_green_light"
-        android:text="Thermal Gallery"
+        android:text="RGB Camera"
         android:textSize="18sp"
         android:textColor="@android:color/black"
         android:drawablePadding="8dp"
         android:gravity="center"
         android:padding="16dp"
-        app:layout_constraintTop_toBottomOf="@id/phoneCameraButton"
+        app:layout_constraintTop_toBottomOf="@id/thermalGalleryButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -66,29 +63,44 @@
         android:layout_height="100dp"
         android:layout_marginTop="16dp"
         android:backgroundTint="@android:color/holo_green_dark"
-        android:text="Browse Gallery"
+        android:text="RGB Gallery"
         android:textSize="18sp"
         android:textColor="@android:color/black"
         android:drawablePadding="8dp"
         android:gravity="center"
         android:padding="16dp"
-        app:layout_constraintTop_toBottomOf="@id/thermalGalleryButton"
+        app:layout_constraintTop_toBottomOf="@id/phoneCameraButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Classification Button -->
     <Button
-        android:id="@+id/aboutButton"
+        android:id="@+id/classificationButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:backgroundTint="@color/green"
         android:gravity="center"
-        android:text="About"
+        android:text="Classifications"
         android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/browseGalleryButton" />
 
+    <!-- About Button -->
+    <Button
+        android:id="@+id/aboutButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="68dp"
+        android:backgroundTint="@color/green"
+        android:gravity="center"
+        android:text="Infomation"
+        android:textColor="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/browseGalleryButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

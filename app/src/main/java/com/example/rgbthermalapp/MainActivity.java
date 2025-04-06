@@ -62,6 +62,12 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(ThermalGalIntent, 5);
         });
 
+        Button classInfoButton = findViewById(R.id.classificationButton);
+        classInfoButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ClassInfoActivity.class);
+            startActivity(intent);
+        });
+
         Button aboutButton = findViewById(R.id.aboutButton);
         aboutButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, AboutActivity.class);
@@ -170,4 +176,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return maxIndex;
     }
+
+
 }
