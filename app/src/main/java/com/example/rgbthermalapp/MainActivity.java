@@ -1,8 +1,5 @@
 package com.example.rgbthermalapp;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,33 +8,32 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.widget.Button;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
 import com.example.rgbthermalapp.ml.Rgbmodel;
 import com.example.rgbthermalapp.ml.Thermalmodel;
-import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
+
 import org.tensorflow.lite.DataType;
+import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Objects;
-import android.os.Build;
-import android.view.View;
-import android.view.WindowInsets;
-import android.view.WindowInsetsController;
-import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
 
+/** @noinspection ALL*/
 public class MainActivity extends AppCompatActivity {
 
     Button RGBCam, RGBGal, ThermalGal;
-    int RGBImageSize = 224, ThermalImageSize = 224;
+    int RGBImageSize = 300, ThermalImageSize = 300;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-
 
         RGBCam = findViewById(R.id.phoneCameraButton);
         RGBGal = findViewById(R.id.browseGalleryButton);
@@ -97,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     private void processImage(Bitmap originalImage, int size, String type) {
         if (originalImage != null) {
             Bitmap resizedImage = Bitmap.createScaledBitmap(originalImage, size, size, false);
@@ -114,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     private void classifyImage(Bitmap originalImage, Bitmap resizedImage, int size, Object modelInstance) {
         TensorBuffer inputBuffer = TensorBuffer.createFixedSize(new int[]{1, size, size, 3}, DataType.FLOAT32);
         ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * size * size * 3);
@@ -127,9 +121,10 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 int val = intValues[pixel++];
-                byteBuffer.putFloat(((val >> 16) & 0xFF) / 255.0f);
-                byteBuffer.putFloat(((val >> 8) & 0xFF) / 255.0f);
-                byteBuffer.putFloat((val & 0xFF) / 255.0f);
+                // No normalization, just raw RGB as float
+                byteBuffer.putFloat((val >> 16) & 0xFF); // R
+                byteBuffer.putFloat((val >> 8) & 0xFF);  // G
+                byteBuffer.putFloat(val & 0xFF);         // B
             }
         }
 
