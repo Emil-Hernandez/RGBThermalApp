@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private String getClassLabel(float[] confidences) {
-        String[] labels = {"Highly Resistant", "Resistant", "Moderately Resistant", "Moderately Susceptible", "Susceptible", "Highly Susceptible"};
+        String[] labels = {"Highly Resistant", "Highly Susceptible", "Moderately Resistant", "Moderately Susceptible", "Resistant", "Susceptible"};
         return labels[getMaxIndex(confidences)];
     }
 
